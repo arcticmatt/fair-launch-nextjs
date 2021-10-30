@@ -19,16 +19,12 @@ import { WalletDialogProvider } from "@solana/wallet-adapter-material-ui";
 import { clusterApiUrl } from "@solana/web3.js";
 import { useMemo } from "react";
 
-const treasury = new anchor.web3.PublicKey(
-  process.env.NEXT_PUBLIC_TREASURY_ADDRESS!
-);
+const candyMachineId = process.env.NEXT_PUBLIC_CANDY_MACHINE_ID
+  ? new anchor.web3.PublicKey(process.env.NEXT_PUBLIC_CANDY_MACHINE_ID)
+  : undefined;
 
-const config = new anchor.web3.PublicKey(
-  process.env.NEXT_PUBLIC_CANDY_MACHINE_CONFIG!
-);
-
-const candyMachineId = new anchor.web3.PublicKey(
-  process.env.NEXT_PUBLIC_CANDY_MACHINE_ID!
+const fairLaunchId = new anchor.web3.PublicKey(
+  process.env.NEXT_PUBLIC_FAIR_LAUNCH_ID!
 );
 
 const network = process.env.NEXT_PUBLIC_SOLANA_NETWORK as WalletAdapterNetwork;
@@ -86,10 +82,9 @@ const App = () => {
           <WalletDialogProvider>
             <Home
               candyMachineId={candyMachineId}
-              config={config}
+              fairLaunchId={fairLaunchId}
               connection={connection}
               startDate={startDateSeed}
-              treasury={treasury}
               txTimeout={txTimeout}
             />
           </WalletDialogProvider>

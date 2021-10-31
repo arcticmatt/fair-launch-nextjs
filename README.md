@@ -16,7 +16,7 @@ The command should look like this.
 fair-launch new_fair_launch -e devnet -k ~/.config/solana/id.json -u test04 -f 0.0001 -s 0.1 -pe 2 -pos "2021 Oct 30 11:30 PST" -poe "2021 Oct 30 11:50 PST" -pte "2021 Oct 30 12:20 PST" -ts 0.1 -n 2 -arbp 5000 -atc 1 -sd "2021 Nov 07 08:00 PST"
 ```
 
-It will output a fair launch ID.
+It will output a fair launch address.
 
 Use `fair-launch new_fair_launch --help` to see what all the options are. Here's some additional info:
 
@@ -33,12 +33,12 @@ TODO: still not really sure how refunds work....
 ### 2. Get the fair launch's mint address
 
 ```
-fair-launch show -e devnet -k ~/.config/solana/id.json -f ID
+fair-launch show -e devnet -k ~/.config/solana/id.json -f FAIR_LAUNCH
 ```
 
 This will output info about the fair launch, including the mint address.
 
-`ID` is the fair launch ID output by the previous command.
+`FAIR_LAUNCH` is the fair launch address output by the previous command.
 
 ### 3. Create token account
 
@@ -61,6 +61,8 @@ candy-machine create_candy_machine -e devnet -k ~/.config/solana/id.json -p 1 --
 
 `MINT` is from step #2, and `ACC` is from step #3 (the token account address).
 
+Remember to set the go-live date of the candy machine! You can set it to some date in the past, since it only works with the fair launch tokens.
+
 ### 5. Update environment variables in `.env.local`
 
 Self-explanatory.
@@ -68,3 +70,54 @@ Self-explanatory.
 ### 6. Finally, you can start up the webapp!
 
 `yarn dev`, same as usual.
+
+## How to run the raffle
+
+### 1. Create missing sequences
+
+Run a command like this:
+
+```
+fair-launch create_missing_sequences -e devnet -k ~/.config/solana/id.json -f FAIR_LAUNCH
+```
+
+### 2. Create fair launch lottery
+
+```
+fair-launch create_fair_launch_lottery -e devnet -k ~/.config/solana/id.json -f FAIR_LAUNCH
+```
+
+This chooses the winners.
+
+### 3. Verify lottery results
+
+```
+fair-launch show_lottery -e devnet -k ~/.config/solana/id.json -f FAIR_LAUNCH
+```
+
+Permissionless command, shows wallets who won and lost.
+
+## After the raffle
+
+### 1. Start phase three
+
+```
+fair-launch start_phase_three -e devnet -k ~/.config/solana/id.json -f FAIR_LAUNCH
+```
+
+When people go to the fair launch site, they should now see one of two things:
+
+- If they lost the raffle, they should see a button to withdraw their funds
+- If they won the raffle, they should see a button to mint (as long as the candy machine is live)
+
+### 2. Punch and refund all
+
+```
+fair-launch punch_and_refund_all_outstanding -e devnet -k ~/.config/solana/id.json -f FAIR_LAUNCH
+```
+
+### 3. Withdraw funds
+
+```
+fair-launch withdraw_funds -e devnet -k ~/.config/solana/id.json -f FAIR_LAUNCH
+```
